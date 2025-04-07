@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroColor: Cognitive Perception Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5e60ce;
+            --primary-dark: #4a4dbb;
+            --focus: #64dfdf;
+            --calm: #80ffdb;
+            --stress: #ff70a6;
+            --fatigue: #ff9770;
+            --normal: #72efdd;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #adb5bd;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f0f2f5 0%, #dfe7fd 100%);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 650px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .game-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .brain-icon {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 150px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+        }
+        
+        .game-content {
+            padding: 30px;
+        }
+        
+        /* Mental State Indicator */
+        .state-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 12px;
+            background-color: var(--light);
+            transition: var(--transition);
+        }
+        
+        .state-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+            transition: var(--transition);
+        }
+        
+        .state-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .state-info p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        /* Game screens */
+        .screen {
+            display: none;
+        }
+        
+        .active-screen {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Start Screen */
+        .intro-text {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .feature {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-icon {
+            margin-right: 10px;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        /* Game Screen */
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .lives {
+            color: var(--stress);
+        }
+        
+        .message {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .message-secondary {
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+        
+        .color-grid {
+            display: grid;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        
+        .color-square {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .color-square:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(94, 96, 206, 0.3);
+            font-size: 1rem;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(94, 96, 206, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+            margin-top: 10px;
+        }
+        
+        /* Analysis Screen */
+        .metrics {
+            margin: 25px 0;
+        }
+        
+        .metric {
+            margin-bottom: 15px;
+        }
+        
+        .metric-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--focus) 100%);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .analysis-result {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        
+        .recommendations {
+            margin-top: 25px;
+        }
+        
+        .recommendation {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .recommendation-icon {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        /* New Continue Button Styles */
+        .continue-button {
+            background: linear-gradient(135deg, var(--focus) 0%, var(--primary) 100%);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(100, 223, 223, 0.4);
+            font-size: 1.2rem;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            margin-top: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .continue-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(100, 223, 223, 0.5);
+        }
+        
+        .continue-button:active {
+            transform: translateY(0);
+        }
+        
+        .continue-button::after {
+            content: '→';
+            position: absolute;
+            right: 20px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .continue-button:hover::after {
+            opacity: 1;
+            right: 15px;
+        }
+        
+        /* Completion Message Popup */
+        .completion-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .completion-message.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .message-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .completion-message.show .message-box {
+            transform: scale(1);
+        }
+        
+        .message-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--focus) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .message-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .message-text {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: var(--dark);
+        }
+        
+        .continue-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(94, 96, 206, 0.3);
+        }
+        
+        .continue-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(94, 96, 206, 0.4);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.6s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.4s ease;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { opacity: 0.8; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        
+        .breathe {
+            animation: breathe 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stat {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .message-box {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            .message-title {
+                font-size: 1.5rem;
+            }
+            
+            .message-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="brain-icon">🧠</div>
+            <h1>NeuroColor</h1>
+            <p>Cognitive Perception Test</p>
+        </div>
+        
+        <div class="game-content">
+            <!-- Mental State Indicator -->
+            <div class="state-indicator" id="state-indicator">
+                <div class="state-icon" id="state-icon">😊</div>
+                <div class="state-info">
+                    <h3 id="state-title">Mental State Analysis</h3>
+                    <p id="state-description">Your cognitive state will appear here during gameplay</p>
+                </div>
+            </div>
+            
+            <!-- Start Screen -->
+            <div class="screen active-screen" id="start-screen">
+                <div class="intro-text">
+                    <p>This game evaluates your cognitive state by analyzing:</p>
+                </div>
+                
+                <div class="features-list">
+                    <div class="feature">
+                        <span class="feature-icon">⏱️</span>
+                        <span>Reaction Time</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🎯</span>
+                        <span>Decision Accuracy</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">💡</span>
+                        <span>Focus Level</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🔄</span>
+                        <span>Consistency</span>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; margin-bottom: 20px;">
+                    The system will adapt to your performance and detect stress, fatigue, or focus states.
+                </p>
+                
+                <button class="btn" id="start-button">Begin Cognitive Test</button>
+            </div>
+            
+            <!-- Game Screen -->
+            <div class="screen" id="game-screen">
+                <div class="game-stats">
+                    <div class="stat">
+                        <div>Score</div>
+                        <div class="stat-value" id="score">0</div>
+                    </div>
+                    <div class="stat">
+                        <div>Lives</div>
+                        <div class="stat-value lives" id="lives">❤️ ❤️ ❤️</div>
+                    </div>
+                    <div class="stat">
+                        <div>Time</div>
+                        <div class="stat-value" id="time">30</div>
+                    </div>
+                </div>
+                
+                <div class="message" id="message">
+                    <div>Find the different color</div>
+                    <div class="message-secondary" id="message-secondary"></div>
+                </div>
+                
+                <div class="color-grid" id="color-grid"></div>
+                
+                <button class="btn btn-secondary" id="quit-button">End Test Early</button>
+            </div>
+            
+            <!-- Analysis Screen -->
+            <div class="screen" id="analysis-screen">
+                <h2 style="text-align: center; margin-bottom: 20px;">Cognitive Analysis Report</h2>
+                
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-label">
+                            <span>Focus Level</span>
+                            <span id="focus-value">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="focus-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="metric-label">
+                            <span>Reaction Speed</span>
+                            <span id="reaction-value">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="reaction-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="metric-label">
+                            <span>Decision Accuracy</span>
+                            <span id="accuracy-value">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="accuracy-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric">
+                        <div class="metric-label">
+                            <span>Consistency</span>
+                            <span id="consistency-value">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="consistency-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="analysis-result">
+                    <h3 style="margin-bottom: 10px;" id="result-title">Your Cognitive State</h3>
+                    <p id="result-description">Analysis in progress...</p>
+                </div>
+                
+                <div class="recommendations">
+                    <h3 style="margin-bottom: 15px;">Recommendations</h3>
+                    
+                    <div class="recommendation">
+                        <span class="recommendation-icon">💡</span>
+                        <span id="recommendation-1">Loading suggestions based on your performance...</span>
+                    </div>
+                    <div class="recommendation">
+                        <span class="recommendation-icon">💡</span>
+                        <span id="recommendation-2"></span>
+                    </div>
+                </div>
+                
+                <button class="continue-button" id="continue-button">
+                    Continue to Quiz Section
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Completion Message Popup -->
+    <div class="completion-message" id="completion-message">
+        <div class="message-box">
+            <div class="message-icon floating">🎉</div>
+            <h2 class="message-title">Amazing Performance!</h2>
+            <p class="message-text">You've completed the cognitive test successfully. Your results show great mental acuity. Ready for the next challenge?</p>
+            <button class="continue-btn" id="message-continue-btn">Let's Continue!</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            score: 0,
+            lives: 3,
+            timeLeft: 30,
+            gameActive: false,
+            difficulty: 4,
+            targetColor: '',
+            colors: [],
+            timer: null,
+            correctAnswers: 0,
+            reactionTimes: [],
+            startTime: 0,
+            roundHistory: [],
+            mentalState: 'neutral',
+            stateHistory: []
+        };
+        
+        // Cognitive metrics
+        const cognitiveMetrics = {
+            focusLevel: 0,
+            reactionSpeed: 0,
+            accuracy: 0,
+            consistency: 0,
+            mentalState: 'analyzing'
+        };
+        
+        // DOM elements
+        const screens = {
+            start: document.getElementById('start-screen'),
+            game: document.getElementById('game-screen'),
+            analysis: document.getElementById('analysis-screen')
+        };
+        
+        const stateIndicator = document.getElementById('state-indicator');
+        const stateIcon = document.getElementById('state-icon');
+        const stateTitle = document.getElementById('state-title');
+        const stateDescription = document.getElementById('state-description');
+        
+        const elements = {
+            score: document.getElementById('score'),
+            lives: document.getElementById('lives'),
+            time: document.getElementById('time'),
+            message: document.getElementById('message'),
+            messageSecondary: document.getElementById('message-secondary'),
+            colorGrid: document.getElementById('color-grid'),
+            focusValue: document.getElementById('focus-value'),
+            focusBar: document.getElementById('focus-bar'),
+            reactionValue: document.getElementById('reaction-value'),
+            reactionBar: document.getElementById('reaction-bar'),
+            accuracyValue: document.getElementById('accuracy-value'),
+            accuracyBar: document.getElementById('accuracy-bar'),
+            consistencyValue: document.getElementById('consistency-value'),
+            consistencyBar: document.getElementById('consistency-bar'),
+            resultTitle: document.getElementById('result-title'),
+            resultDescription: document.getElementById('result-description'),
+            recommendation1: document.getElementById('recommendation-1'),
+            recommendation2: document.getElementById('recommendation-2')
+        };
+        
+        const buttons = {
+            start: document.getElementById('start-button'),
+            quit: document.getElementById('quit-button'),
+            continueBtn: document.getElementById('continue-button'),
+            messageContinue: document.getElementById('message-continue-btn')
+        };
+        
+        // Mental states data
+        const mentalStates = {
+            focused: {
+                icon: '🧠',
+                title: 'Highly Focused',
+                description: 'You\'re in a state of deep concentration',
+                color: 'var(--focus)',
+                emoji: '😌'
+            },
+            calm: {
+                icon: '🌊',
+                title: 'Calm and Steady',
+                description: 'You\'re performing in a relaxed state',
+                color: 'var(--calm)',
+                emoji: '😊'
+            },
+            stressed: {
+                icon: '🔥',
+                title: 'Stressed',
+                description: 'You might be feeling some pressure',
+                color: 'var(--stress)',
+                emoji: '😟'
+            },
+            fatigued: {
+                icon: '🌙',
+                title: 'Fatigued',
+                description: 'You might be feeling tired',
+                color: 'var(--fatigue)',
+                emoji: '😴'
+            },
+            neutral: {
+                icon: '✨',
+                title: 'Neutral State',
+                description: 'Your cognitive state is balanced',
+                color: 'var(--normal)',
+                emoji: '😐'
+            },
+            analyzing: {
+                icon: '🔍',
+                title: 'Analyzing',
+                description: 'Evaluating your cognitive patterns',
+                color: 'var(--gray)',
+                emoji: '🤔'
+            }
+        };
+        
+        // Update mental state display
+        function updateMentalState(state) {
+            const stateData = mentalStates[state] || mentalStates.neutral;
+            gameState.mentalState = state;
+            gameState.stateHistory.push(state);
+            
+            stateIcon.textContent = stateData.emoji;
+            stateTitle.textContent = stateData.title;
+            stateDescription.textContent = stateData.description;
+            stateIndicator.style.background = `linear-gradient(135deg, ${stateData.color} 0%, var(--primary-dark) 100%)`;
+            
+            // Add animation when state changes
+            stateIcon.classList.add('pulse');
+            setTimeout(() => stateIcon.classList.remove('pulse'), 600);
+        }
+        
+        // Generate a random color in HSL format
+        function generateColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = 70 + Math.floor(Math.random() * 20); // 70-90%
+            const lightness = 50 + Math.floor(Math.random() * 15); // 50-65%
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+        
+        // Generate slightly different color (for the odd one out)
+        function generateSimilarColor(baseColor, difficultyFactor) {
+            const [hue, sat, light] = baseColor.match(/\d+/g).map(Number);
+            
+            // Adjust difficulty based on mental state
+            let hueVariation = 15 - (difficultyFactor * 2); // Range from 5-15
+            hueVariation = Math.max(5, Math.min(15, hueVariation));
+            
+            // Determine variation direction
+            const direction = Math.random() > 0.5 ? 1 : -1;
+            let newHue = (hue + (direction * hueVariation)) % 360;
+            if (newHue < 0) newHue += 360;
+            
+            // Slightly adjust saturation and lightness too for more variation
+            const newSat = Math.min(100, Math.max(50, sat + (Math.random() > 0.5 ? 3 : -3)));
+            const newLight = Math.min(80, Math.max(40, light + (Math.random() > 0.5 ? 2 : -2)));
+            
+            return `hsl(${newHue}, ${newSat}%, ${newLight}%)`;
+        }
+        
+        // Start new round
+        function startNewRound() {
+            const baseColor = generateColor();
+            const totalSquares = gameState.difficulty * gameState.difficulty;
+            
+            // Adjust difficulty factor based on mental state
+            let difficultyFactor = 0;
+            if (gameState.mentalState === 'focused') difficultyFactor = 3;
+            else if (gameState.mentalState === 'stressed') difficultyFactor = 1;
+            
+            // Choose random position for the odd color
+            const oddPosition = Math.floor(Math.random() * totalSquares);
+            const oddColor = generateSimilarColor(baseColor, difficultyFactor);
+            
+            // Create grid of colors
+            gameState.colors = Array(totalSquares).fill(baseColor);
+            gameState.colors[oddPosition] = oddColor;
+            gameState.targetColor = oddColor;
+            
+            // Record round start time for reaction time calculation
+            gameState.startTime = Date.now();
+            
+            renderColorGrid();
+            updateMentalStateIndicator();
+        }
+        
+        // Update mental state indicator during gameplay
+        function updateMentalStateIndicator() {
+            if (gameState.roundHistory.length < 3) return;
+            
+            // Calculate average reaction time
+            const avgReaction = gameState.reactionTimes.reduce((a, b) => a + b, 0) / gameState.reactionTimes.length;
+            
+            // Calculate accuracy
+            const accuracy = gameState.correctAnswers / gameState.roundHistory.length;
+            
+            // Determine mental state based on metrics
+            let newState = 'neutral';
+            
+            if (avgReaction < 1000 && accuracy > 0.8) {
+                newState = 'focused';
+            } else if (avgReaction > 1500 && accuracy < 0.6) {
+                newState = 'stressed';
+            } else if (avgReaction > 2000) {
+                newState = 'fatigued';
+            } else if (accuracy > 0.7) {
+                newState = 'calm';
+            }
+            
+            // Only update if state changed
+            if (newState !== gameState.mentalState) {
+                updateMentalState(newState);
+            }
+        }
+        
+        // Render the color grid
+        function renderColorGrid() {
+            elements.colorGrid.innerHTML = '';
+            elements.colorGrid.style.gridTemplateColumns = `repeat(${gameState.difficulty}, 1fr)`;
+            
+            gameState.colors.forEach((color, index) => {
+                const square = document.createElement('div');
+                square.className = 'color-square';
+                square.style.backgroundColor = color;
+                square.addEventListener('click', () => handleSquareClick(color, index));
+                elements.colorGrid.appendChild(square);
+            });
+        }
+        
+        // Handle square click
+        function handleSquareClick(color, index) {
+            if (!gameState.gameActive) return;
+            
+            // Calculate reaction time
+            const reactionTime = Date.now() - gameState.startTime;
+            gameState.reactionTimes.push(reactionTime);
+            
+            // Record round data
+            gameState.roundHistory.push({
+                correct: color === gameState.targetColor,
+                reactionTime,
+                difficulty: gameState.difficulty,
+                timestamp: Date.now()
+            });
+            
+            if (color === gameState.targetColor) {
+                // Correct answer
+                gameState.score += gameState.difficulty;
+                gameState.correctAnswers++;
+                elements.score.textContent = gameState.score;
+                
+                // Update message with reaction time feedback
+                let reactionFeedback = '';
+                if (reactionTime < 800) reactionFeedback = "Lightning fast!";
+                else if (reactionTime < 1200) reactionFeedback = "Quick response!";
+                else if (reactionTime < 1800) reactionFeedback = "Good timing";
+                else reactionFeedback = "Could be faster";
+                
+                elements.message.innerHTML = `<div>Correct! +${gameState.difficulty} points</div><div class="message-secondary">${reactionFeedback} (${reactionTime}ms)</div>`;
+                elements.message.className = 'message pulse';
+                elements.message.style.background = 'linear-gradient(135deg, rgba(100, 223, 223, 0.2) 0%, rgba(74, 77, 187, 0.1) 100%)';
+                
+                // Visual feedback
+                const squares = document.querySelectorAll('.color-square');
+                squares[index].classList.add('pulse');
+                
+                // Increase difficulty every 3 correct answers if focused
+                if (gameState.mentalState === 'focused' && gameState.correctAnswers % 3 === 0 && gameState.difficulty < 6) {
+                    gameState.difficulty += 1;
+                    elements.messageSecondary.textContent = `Challenge increased to ${gameState.difficulty}×${gameState.difficulty} grid`;
+                }
+                
+                // Start new round after short delay
+                setTimeout(startNewRound, 800);
+            } else {
+                // Wrong answer
+                gameState.lives -= 1;
+                elements.lives.textContent = '❤️ '.repeat(gameState.lives).trim();
+                
+                // Update message with reaction time feedback
+                elements.message.innerHTML = `<div>Incorrect choice!</div><div class="message-secondary">Took ${reactionTime}ms</div>`;
+                elements.message.className = 'message shake';
+                elements.message.style.background = 'linear-gradient(135deg, rgba(255, 112, 166, 0.2) 0%, rgba(74, 77, 187, 0.1) 100%)';
+                
+                // Visual feedback
+                const squares = document.querySelectorAll('.color-square');
+                squares[index].classList.add('shake');
+                
+                if (gameState.lives <= 0) {
+                    setTimeout(endGame, 800);
+                } else {
+                    // Make next round slightly easier if stressed
+                    if (gameState.mentalState === 'stressed' && gameState.difficulty > 3) {
+                        gameState.difficulty -= 1;
+                        setTimeout(() => {
+                            elements.messageSecondary.textContent = `Difficulty reduced to help you`;
+                        }, 300);
+                    }
+                }
+            }
+            
+            // Update mental state analysis
+            updateMentalStateIndicator();
+        }
+        
+        // Calculate cognitive metrics
+        function calculateMetrics() {
+            if (gameState.roundHistory.length === 0) return;
+            
+            // Reaction speed (lower is better)
+            const avgReaction = gameState.reactionTimes.reduce((a, b) => a + b, 0) / gameState.reactionTimes.length;
+            cognitiveMetrics.reactionSpeed = Math.max(0, 100 - Math.min(100, (avgReaction - 500) / 15));
+            
+            // Accuracy
+            cognitiveMetrics.accuracy = (gameState.correctAnswers / gameState.roundHistory.length) * 100;
+            
+            // Focus level (combination of speed and accuracy)
+            cognitiveMetrics.focusLevel = (cognitiveMetrics.reactionSpeed * 0.6) + (cognitiveMetrics.accuracy * 0.4);
+            
+            // Consistency (standard deviation of reaction times)
+            const squaredDiffs = gameState.reactionTimes.map(t => Math.pow(t - avgReaction, 2));
+            const avgSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / squaredDiffs.length;
+            const reactionStdDev = Math.sqrt(avgSquaredDiff);
+            cognitiveMetrics.consistency = Math.max(0, 100 - (reactionStdDev / 20));
+            
+            // Determine overall mental state
+            if (cognitiveMetrics.focusLevel > 80) {
+                cognitiveMetrics.mentalState = 'focused';
+            } else if (cognitiveMetrics.focusLevel > 60) {
+                cognitiveMetrics.mentalState = 'calm';
+            } else if (cognitiveMetrics.accuracy < 50) {
+                cognitiveMetrics.mentalState = 'stressed';
+            } else if (avgReaction > 1800) {
+                cognitiveMetrics.mentalState = 'fatigued';
+            } else {
+                cognitiveMetrics.mentalState = 'neutral';
+            }
+            
+            // Update UI with metrics
+            updateMetricsDisplay();
+        }
+        
+        // Update metrics display
+        function updateMetricsDisplay() {
+            // Animate progress bars
+            animateValue(elements.focusValue, 0, cognitiveMetrics.focusLevel, 1000);
+            animateValue(elements.reactionValue, 0, cognitiveMetrics.reactionSpeed, 1000);
+            animateValue(elements.accuracyValue, 0, cognitiveMetrics.accuracy, 1000);
+            animateValue(elements.consistencyValue, 0, cognitiveMetrics.consistency, 1000);
+            
+            setTimeout(() => {
+                elements.focusBar.style.width = `${cognitiveMetrics.focusLevel}%`;
+                elements.reactionBar.style.width = `${cognitiveMetrics.reactionSpeed}%`;
+                elements.accuracyBar.style.width = `${cognitiveMetrics.accuracy}%`;
+                elements.consistencyBar.style.width = `${cognitiveMetrics.consistency}%`;
+            }, 100);
+            
+            // Set result description
+            const stateData = mentalStates[cognitiveMetrics.mentalState] || mentalStates.neutral;
+            elements.resultTitle.textContent = `Your State: ${stateData.title}`;
+            
+            let description = '';
+            if (cognitiveMetrics.mentalState === 'focused') {
+                description = `Your high focus level (${Math.round(cognitiveMetrics.focusLevel)}%) and quick reactions show peak cognitive performance.`;
+            } else if (cognitiveMetrics.mentalState === 'calm') {
+                description = `Your balanced performance (${Math.round(cognitiveMetrics.focusLevel)}%) indicates a relaxed but effective mental state.`;
+            } else if (cognitiveMetrics.mentalState === 'stressed') {
+                description = `Your lower accuracy (${Math.round(cognitiveMetrics.accuracy)}%) suggests you might be experiencing some stress.`;
+            } else if (cognitiveMetrics.mentalState === 'fatigued') {
+                description = `Your slower reaction times indicate you might be feeling fatigued.`;
+            } else {
+                description = `Your cognitive metrics show a neutral state with room for improvement.`;
+            }
+            
+            elements.resultDescription.textContent = description;
+            
+            // Set recommendations
+            setRecommendations();
+        }
+        
+        // Animate value counters
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value + '%';
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        // Set personalized recommendations
+        function setRecommendations() {
+            if (cognitiveMetrics.mentalState === 'focused') {
+                elements.recommendation1.textContent = "Leverage this focused state for important tasks";
+                elements.recommendation2.textContent = "Try challenging mental exercises to maintain this peak state";
+            } else if (cognitiveMetrics.mentalState === 'calm') {
+                elements.recommendation1.textContent = "This is an ideal state for creative work";
+                elements.recommendation2.textContent = "Practice mindfulness to extend this balanced state";
+            } else if (cognitiveMetrics.mentalState === 'stressed') {
+                elements.recommendation1.textContent = "Try deep breathing exercises to reduce stress";
+                elements.recommendation2.textContent = "Take short breaks every 30 minutes to reset";
+            } else if (cognitiveMetrics.mentalState === 'fatigued') {
+                elements.recommendation1.textContent = "Consider taking a short nap or rest break";
+                elements.recommendation2.textContent = "Hydrate and stretch to refresh your mind";
+            } else {
+                elements.recommendation1.textContent = "Practice regular focus exercises to improve";
+                elements.recommendation2.textContent = "Try the game at different times to find your peak focus periods";
+            }
+        }
+        
+        // Start the game
+        function startGame() {
+            // Reset game state
+            gameState.score = 0;
+            gameState.lives = 3;
+            gameState.timeLeft = 30;
+            gameState.difficulty = 4;
+            gameState.gameActive = true;
+            gameState.correctAnswers = 0;
+            gameState.reactionTimes = [];
+            gameState.roundHistory = [];
+            gameState.stateHistory = [];
+            
+            // Reset UI
+            elements.score.textContent = gameState.score;
+            elements.lives.textContent = '❤️ ❤️ ❤️';
+            elements.time.textContent = gameState.timeLeft;
+            elements.message.innerHTML = '<div>Find the different color</div><div class="message-secondary"></div>';
+            elements.message.className = 'message';
+            elements.message.style.background = 'transparent';
+            
+            // Switch screens
+            switchScreen('game');
+            
+            // Start with analyzing state
+            updateMentalState('analyzing');
+            
+            // Start game timer
+            startTimer();
+            
+            // Begin first round
+            startNewRound();
+        }
+        
+        // End the game
+        function endGame() {
+            gameState.gameActive = false;
+            clearInterval(gameState.timer);
+            
+            // Calculate final metrics
+            calculateMetrics();
+            
+            // Switch to analysis screen
+            switchScreen('analysis');
+        }
+        
+        // Quit the game
+        function quitGame() {
+            gameState.gameActive = false;
+            clearInterval(gameState.timer);
+            switchScreen('start');
+        }
+        
+        // Switch between screens
+        function switchScreen(screenName) {
+            // Hide all screens
+            Object.values(screens).forEach(screen => {
+                screen.classList.remove('active-screen');
+            });
+            
+            // Show requested screen
+            screens[screenName].classList.add('active-screen');
+        }
+        
+        // Timer function
+        function startTimer() {
+            clearInterval(gameState.timer);
+            
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft -= 1;
+                elements.time.textContent = gameState.timeLeft;
+                
+                // Change color when time is running out
+                if (gameState.timeLeft <= 10) {
+                    elements.time.style.color = 'var(--stress)';
+                    elements.time.classList.add('pulse');
+                } else {
+                    elements.time.style.color = 'var(--primary)';
+                    elements.time.classList.remove('pulse');
+                }
+                
+                if (gameState.timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        // Event listeners
+        buttons.start.addEventListener('click', startGame);
+        buttons.quit.addEventListener('click', quitGame);
+        buttons.continueBtn.addEventListener('click', () => {
+            document.getElementById('completion-message').classList.add('show');
+        });
+        buttons.messageContinue.addEventListener('click', () => {
+            window.location.href = '01_index.html';
+        });
+        
+        // Initialize
+        updateMentalState('neutral');
+    </script>
+</body>
+</html>

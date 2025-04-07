@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeaceHub - Stress Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f5f7fa;
+            --text-color: #333;
+            --header-bg: #6a5acd;
+            --form-bg: white;
+            --label-bg: #7c4dff;
+            --box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            --question-bg: white;
+            --button-bg: #7c4dff;
+            --button-text: white;
+            --contact-bg: #6a5acd;
+            --contact-hover: #5a4acd;
+            --accent-color: #ff6b6b;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --header-bg: #4a3dc0;
+            --form-bg: #1e1e1e;
+            --label-bg: #5e35b1;
+            --box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            --question-bg: #2d2d2d;
+            --button-bg: #5e35b1;
+            --button-text: #ffffff;
+            --contact-bg: #4a3dc0;
+            --contact-hover: #3a2db0;
+            --accent-color: #ff5252;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+        
+        header {
+            background: var(--header-bg);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 1.5rem;
+        }
+        
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .nav-menu ul li {
+            display: inline;
+        }
+        
+        .nav-menu ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+        
+        .nav-menu ul li a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        h2 {
+            text-align: center;
+            color: var(--header-bg);
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent-color);
+        }
+        
+        .form-box {
+            background: var(--form-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            background: var(--question-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .question h3 {
+            margin-top: 0;
+            color: var(--header-bg);
+            font-size: 1.2rem;
+        }
+        
+        .question label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .question label:hover {
+            background: rgba(124, 77, 255, 0.1);
+        }
+        
+        .question input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.3);
+            accent-color: var(--header-bg);
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: block;
+            margin: 30px auto;
+            box-shadow: 0 4px 10px rgba(124, 77, 255, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(124, 77, 255, 0.4);
+        }
+        
+        .result-box {
+            display: none;
+            padding: 25px;
+            background: var(--question-bg);
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            margin: 30px auto;
+            max-width: 800px;
+            border-top: 5px solid var(--accent-color);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-box h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+        
+        .result-box p {
+            margin-bottom: 0;
+            font-size: 1.1rem;
+        }
+        
+        .emoji {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .contact {
+            background: var(--header-bg);
+            padding: 40px 20px;
+            color: white;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .contact h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .contact h2:after {
+            background: white;
+        }
+        
+        .contact p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+        }
+        
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .contact a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 25px;
+            background: white;
+            color: var(--header-bg);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .contact a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        
+        .contact a i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Dark mode toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            background: var(--header-bg);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .dark-mode .progress-container {
+            background-color: #2d2d2d;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: var(--accent-color);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .nav-menu ul {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 15px;
+            }
+            
+            .form-box {
+                padding: 20px;
+            }
+            
+            .question {
+                padding: 15px;
+            }
+            
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .contact a {
+                width: 100%;
+            }
+        }
+        
+        /* Animation for questions */
+        .question {
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Add delay to each question */
+        .question:nth-child(1) { animation-delay: 0.1s; }
+        .question:nth-child(2) { animation-delay: 0.2s; }
+        .question:nth-child(3) { animation-delay: 0.3s; }
+        .question:nth-child(4) { animation-delay: 0.4s; }
+        .question:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Loading spinner */
+        .loader {
+            display: none;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--header-bg);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Header right section */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .username-display {
+            font-weight: 600;
+            color: white;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .username-display i {
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Tooltip for questions */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 10px;
+            color: var(--accent-color);
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+    
+    <header>
+        <div class="logo">
+            <i class="fas fa-peace"></i>
+            <span>PeaceHub</span>
+        </div>
+        <div class="header-right">
+            <span id="username-display" class="username-display">
+                <i class="fas fa-user"></i>
+                <span>Guest</span>
+            </span>
+            <button id="logout-btn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="01_index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="02_articles.html"><i class="fas fa-newspaper"></i> Articles</a></li>
+                    <li><a href="03_meditation.html"><i class="fas fa-spa"></i> Meditation</a></li>
+                    <li><a href="05_chat.html"><i class="fas fa-comments"></i> Chat Support</a></li>
+                    <li><a href="04_Doctors.html"><i class="fas fa-user-md"></i> Doctors</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Stress Quiz Section -->
+    <section id="quiz-section" class="container">
+        <h2>Stress Level Assessment</h2>
+        
+        <div class="form-box">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <form id="quiz-form">
+                <div class="question">
+                    <h3>1. How often do you feel overwhelmed by tasks? 
+                        <span class="tooltip">
+                            <i class="fas fa-question-circle"></i>
+                            <span class="tooltiptext">Consider both work and personal responsibilities</span>
+                        </span>
+                    </h3>
+                    <label><input type="radio" name="q1" value="1"> Rarely - I manage my tasks well</label>
+                    <label><input type="radio" name="q1" value="2"> Sometimes - Occasionally feel swamped</label>
+                    <label><input type="radio" name="q1" value="3"> Often - Frequently feel overloaded</label>
+                    <label><input type="radio" name="q1" value="4"> Always - Constantly drowning in tasks</label>
+                </div>
+
+                <div class="question">
+                    <h3>2. How do you handle unexpected challenges?</h3>
+                    <label><input type="radio" name="q2" value="1"> Very well - I adapt quickly</label>
+                    <label><input type="radio" name="q2" value="2"> Okay - I manage after initial surprise</label>
+                    <label><input type="radio" name="q2" value="3"> Not great - It throws me off balance</label>
+                    <label><input type="radio" name="q2" value="4"> I panic - Challenges overwhelm me</label>
+                </div>
+
+                <div class="question">
+                    <h3>3. Do you have trouble sleeping due to stress?</h3>
+                    <label><input type="radio" name="q3" value="1"> Never - I sleep soundly</label>
+                    <label><input type="radio" name="q3" value="2"> Rarely - Only during extreme stress</label>
+                    <label><input type="radio" name="q3" value="3"> Sometimes - Occasional sleepless nights</label>
+                    <label><input type="radio" name="q3" value="4"> Frequently - Sleep is regularly disrupted</label>
+                </div>
+
+                <div class="question">
+                    <h3>4. How often do you feel physically tense or exhausted?</h3>
+                    <label><input type="radio" name="q4" value="1"> Never - I feel physically relaxed</label>
+                    <label><input type="radio" name="q4" value="2"> Occasionally - After particularly busy days</label>
+                    <label><input type="radio" name="q4" value="3"> Often - Multiple times a week</label>
+                    <label><input type="radio" name="q4" value="4"> Always - Constant physical tension</label>
+                </div>
+
+                <div class="question">
+                    <h3>5. Do you feel supported by family and friends?</h3>
+                    <label><input type="radio" name="q5" value="1"> Always - Strong support network</label>
+                    <label><input type="radio" name="q5" value="2"> Most times - Usually feel supported</label>
+                    <label><input type="radio" name="q5" value="3"> Sometimes - Support is inconsistent</label>
+                    <label><input type="radio" name="q5" value="4"> Rarely - Feel isolated or unsupported</label>
+                </div>
+
+                <button type="button" onclick="calculateStress()">
+                    <i class="fas fa-paper-plane"></i> Get My Results
+                </button>
+            </form>
+
+            <div class="loader" id="loader"></div>
+            
+            <div class="result-box" id="result-box">
+                <h3>Your Stress Assessment Results</h3>
+                <p id="result-text"></p>
+                <div id="recommendations"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="contact">
+        <h2>Need Immediate Help?</h2>
+        <p>If you're feeling overwhelmed or in crisis, these resources are available 24/7:</p>
+        
+        <div class="contact-links">
+            <a href="tel:988">
+                <i class="fas fa-phone-alt"></i> 988 Suicide & Crisis Lifeline
+            </a>
+            <a href="tel:18006624357">
+                <i class="fas fa-phone-alt"></i> NAMI HelpLine: 1-800-662-4357
+            </a>
+            <a href="05_chat.html">
+                <i class="fas fa-comments"></i> PeaceHub Chat Support
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        
+        darkModeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            
+            // Update icon
+            const icon = darkModeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+            
+            // Save preference to localStorage
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? 'enabled' : 'disabled');
+        });
+
+        // Check for saved dark mode preference on page load
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            const icon = darkModeToggle.querySelector('i');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+
+        // Update progress bar as user answers questions
+        const radioInputs = document.querySelectorAll('input[type="radio"]');
+        const progressBar = document.getElementById('progressBar');
+        
+        radioInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const answeredQuestions = new Set();
+                document.querySelectorAll('input[type="radio"]:checked').forEach(checked => {
+                    answeredQuestions.add(checked.name);
+                });
+                
+                const progress = (answeredQuestions.size / 5) * 100;
+                progressBar.style.width = progress + '%';
+            });
+        });
+
+        function calculateStress() {
+            const loader = document.getElementById('loader');
+            const resultBox = document.getElementById('result-box');
+            const resultText = document.getElementById('result-text');
+            const recommendations = document.getElementById('recommendations');
+            
+            // Show loading spinner
+            loader.style.display = 'block';
+            resultBox.style.display = 'none';
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                let score = 0;
+                let answered = 0;
+                
+                for (let i = 1; i <= 5; i++) {
+                    let checked = document.querySelector(`input[name="q${i}"]:checked`);
+                    if (checked) {
+                        score += parseInt(checked.value);
+                        answered++;
+                    }
+                }
+                
+                // Hide loader
+                loader.style.display = 'none';
+                
+                // Check if all questions answered
+                if (answered < 5) {
+                    resultText.innerHTML = '<span class="emoji">⚠️</span> Please answer all questions to get accurate results.';
+                    resultBox.style.display = 'block';
+                    return;
+                }
+                
+                // Generate results
+                let result = "";
+                let recs = "";
+                
+                if (score <= 7) {
+                    result = '<span class="emoji">😊</span> <strong>Low Stress Level</strong><br>You are managing stress exceptionally well! Your ability to stay calm and handle challenges is impressive.';
+                    recs = '<div class="recommendation"><h4>Recommendations:</h4><ul><li>Continue your current stress management practices</li><li>Consider sharing your techniques with others</li><li>Stay mindful of maintaining this healthy balance</li></ul></div>';
+                } 
+                else if (score <= 13) {
+                    result = '<span class="emoji">😐</span> <strong>Moderate Stress Level</strong><br>You\'re experiencing some stress, but generally managing okay. There\'s room for improvement in your stress management.';
+                    recs = '<div class="recommendation"><h4>Recommendations:</h4><ul><li>Practice daily mindfulness or meditation</li><li>Consider time management techniques</li><li>Ensure you\'re getting regular exercise</li><li>Make time for relaxing activities</li></ul></div>';
+                } 
+                else {
+                    result = '<span class="emoji">😟</span> <strong>High Stress Level</strong><br>Your stress levels are concerning and may be affecting your wellbeing. It\'s important to take action to reduce your stress.';
+                    recs = '<div class="recommendation"><h4>Recommendations:</h4><ul><li>Prioritize self-care and relaxation</li><li>Consider talking to a professional</li><li>Explore stress management resources</li><li>Reach out to your support network</li><li>Try our meditation and relaxation tools</li></ul></div>';
+                }
+                
+                resultText.innerHTML = result;
+                recommendations.innerHTML = recs;
+                resultBox.style.display = 'block';
+                
+                // Scroll to results
+                resultBox.scrollIntoView({ behavior: 'smooth' });
+                
+            }, 1500); // Simulate processing time
+        }
+
+        // Logout functionality
+        document.getElementById("logout-btn").addEventListener("click", function() {
+            // Clear user data from localStorage
+            localStorage.removeItem('username');
+            localStorage.removeItem('isLoggedIn');
+            
+            // Redirect to login page
+            window.location.href = "index.html";
+        });
+
+        // Check if user is logged in on page load
+        window.onload = function() {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                const username = localStorage.getItem('username') || 'User';
+                document.getElementById("username-display").querySelector('span').textContent = username;
+            } else {
+                // If not logged in, redirect to login page
+                window.location.href = "index.html";
+            }
+            
+            // Add animation to questions after page loads
+            setTimeout(() => {
+                const questions = document.querySelectorAll('.question');
+                questions.forEach(q => q.style.animationPlayState = 'running');
+            }, 300);
+        };
+    </script>
+
+    <script src='https://cdn.jotfor.ms/s/umd/latest/for-embedded-agent.js'></script>
+<script>
+  window.addEventListener("DOMContentLoaded", function() {
+    window.AgentInitializer.init({
+      agentRenderURL: "https://agent.jotform.com/019561cf62ae7d609cb0d3faf8d38aeff7e2",
+      rootId: "JotformAgent-019561cf62ae7d609cb0d3faf8d38aeff7e2",
+      formID: "019561cf62ae7d609cb0d3faf8d38aeff7e2",
+      queryParams: ["skipWelcome=1", "maximizable=1"],
+      domain: "https://www.jotform.com",
+      isDraggable: false,
+      background: "linear-gradient(180deg, #f8e71c 0%, #f5a623 100%)",
+      buttonBackgroundColor: "#50e3c2",
+      buttonIconColor: "#f5a623",
+      variant: false,
+      customizations: {
+        "greeting": "Yes",
+        "greetingMessage": "If you have anything feel free to talk😊",
+        "pulse": "Yes",
+        "position": "left",
+        "autoOpenChatIn": "0"
+      },
+      isVoice: false
+    });
+  });
+</script>
+</body>
+</html>

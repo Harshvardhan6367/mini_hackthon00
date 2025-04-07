@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Mental Health Professionals | PeaceHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a89dc;
+            --secondary-color: #3bafda;
+            --accent-color: #e6e9ed;
+            --text-color: #434a54;
+            --light-text: #f5f7fa;
+            --dark-bg: #2d3436;
+            --card-bg: #ffffff;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary-color: #5d9cec;
+            --secondary-color: #48cfad;
+            --accent-color: #3d3d3d;
+            --text-color: #f5f7fa;
+            --light-text: #f5f7fa;
+            --dark-bg: #1e272e;
+            --card-bg: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        .navbar {
+            background: var(--primary-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-greeting {
+            color: white;
+            font-weight: 500;
+            display: none;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .dark-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 2rem;
+            padding: 0 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+            transition: var(--transition);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 137, 220, 0.2);
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        #doctors-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .doctor-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+            animation: slideUp 0.5s ease;
+            animation-fill-mode: both;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .doctor-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .doctor-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .doctor-card:hover .doctor-img img {
+            transform: scale(1.05);
+        }
+
+        .doctor-info {
+            padding: 1.5rem;
+        }
+
+        .doctor-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .specialization {
+            display: inline-block;
+            background: rgba(74, 137, 220, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .doctor-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-item i {
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #3a70c2;
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(74, 137, 220, 0.1);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-color);
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                margin-top: 140px;
+                padding: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            #doctors-list {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+        }
+
+        /* Animation delays for cards */
+        .doctor-card:nth-child(1) { animation-delay: 0.1s; }
+        .doctor-card:nth-child(2) { animation-delay: 0.2s; }
+        .doctor-card:nth-child(3) { animation-delay: 0.3s; }
+        .doctor-card:nth-child(4) { animation-delay: 0.4s; }
+        .doctor-card:nth-child(5) { animation-delay: 0.5s; }
+        .doctor-card:nth-child(6) { animation-delay: 0.6s; }
+        .doctor-card:nth-child(7) { animation-delay: 0.7s; }
+        .doctor-card:nth-child(8) { animation-delay: 0.8s; }
+        .doctor-card:nth-child(9) { animation-delay: 0.9s; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>PeaceHub</span>
+        </div>
+        <div class="nav-links">
+            <a href="01_index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="02_articles.html"><i class="fas fa-newspaper"></i> Articles</a>
+            <a href="03_meditation.html"><i class="fas fa-spa"></i> Meditation</a>
+            <a href="https://agent.jotform.com/019561cf62ae7d609cb0d3faf8d38aeff7e2"><i class="fas fa-comments"></i> Chat Support</a>
+            <a href="04_doctors.html"><i class="fas fa-user-md"></i> Doctors</a>
+        </div>
+        <div class="nav-right">
+            <span id="username-display" class="user-greeting"></span>
+            <button id="logout-btn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+            <div class="dark-mode-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Find Your Mental Health Professional</h1>
+            <p>Connect with licensed therapists, psychologists, and psychiatrists who can help you on your journey to mental wellness.</p>
+        </div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="search" class="search-input" placeholder="Search by name, specialization, or location...">
+                <button class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <div class="filter-options">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">Psychiatrist</button>
+                <button class="filter-btn">Psychologist</button>
+                <button class="filter-btn">Psychotherapist</button>
+                <button class="filter-btn">Online</button>
+            </div>
+        </div>
+
+        <div id="doctors-list">
+            <!-- Doctor cards will be inserted here by JavaScript -->
+        </div>
+
+        <div class="no-results">
+            <i class="fas fa-user-md" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-color);"></i>
+            <h3>No doctors found</h3>
+            <p>Try adjusting your search or filters</p>
+        </div>
+    </div>
+
+    <script>
+        // Doctor data
+        const doctors = [
+            {
+                id: 1,
+                name: "Dr. Ahona Roy",
+                specialization: "Psychotherapist",
+                email: "Psychotherapywithahona@gmail.com",
+                phone: "9007223200",
+                location: "Kolkata, India",
+                experience: "8 years",
+                languages: ["English", "Bengali", "Hindi"],
+                image: "abhona.jpeg",
+                available: true,
+                online: false
+            },
+            {
+                id: 2,
+                name: "Dr. Mukesh Chand Daderwal",
+                specialization: "Psychiatrist",
+                email: "daderwalmukesh@gmail.com",
+                phone: "9945985715",
+                location: "Delhi, India",
+                experience: "12 years",
+                languages: ["English", "Hindi"],
+                image: "mukesh.jpeg",
+                available: true,
+                online: true
+            },
+            {
+                id: 3,
+                name: "Dr. Ahmed Asif",
+                specialization: "Psychotherapist",
+                email: "asif@inspirononline.com",
+                phone: "9845676442",
+                location: "Bangalore, India",
+                experience: "6 years",
+                languages: ["English", "Hindi", "Urdu"],
+                image: "roy.jpeg",
+                available: false,
+                online: true
+            },
+            {
+                id: 4,
+                name: "Dr. Aayushi Garg",
+                specialization: "Psychologist",
+                email: "psy.aayushigarg@gmail.com",
+                phone: "",
+                location: "Mumbai, India",
+                experience: "5 years",
+                languages: ["English", "Hindi", "Marathi"],
+                image: "aayushi.jpeg",
+                available: true,
+                online: false
+            },
+            {
+                id: 5,
+                name: "Dr. Anis Syed",
+                specialization: "Psychotherapist",
+                email: "anis@gmail.com",
+                phone: "9845676442",
+                location: "Chennai, India",
+                experience: "7 years",
+                languages: ["English", "Tamil", "Hindi"],
+                image: "anis.jpeg",
+                available: true,
+                online: true
+            },
+            {
+                id: 6,
+                name: "Dr. Kartik Rai",
+                specialization: "Psychotherapist",
+                email: "raikartik444@gmail.com",
+                phone: "8377952168",
+                location: "Hyderabad, India",
+                experience: "9 years",
+                languages: ["English", "Hindi", "Telugu"],
+                image: "kartik.jpeg",
+                available: true,
+                online: false
+            },
+            {
+                id: 7,
+                name: "Dr. Nimesh Mohan George",
+                specialization: "Psychotherapist",
+                email: "nimeshmg0511@gmail.com",
+                phone: "7994641086",
+                location: "Pune, India",
+                experience: "10 years",
+                languages: ["English", "Hindi", "Marathi"],
+                image: "george.jpeg",
+                available: true,
+                online: true
+            },
+            {
+                id: 8,
+                name: "Dr. Shwetank Bansal",
+                specialization: "Psychiatrist",
+                email: "helpdesk@betterme.in",
+                phone: "9868042773",
+                location: "Delhi, India",
+                experience: "15 years",
+                languages: ["English", "Hindi"],
+                image: "shw.jpeg",
+                available: true,
+                online: false
+            },
+            {
+                id: 9,
+                name: "Dr. Anshul Khosla",
+                specialization: "Psychologist",
+                email: "support@amahahealth.com",
+                phone: "020 71171501",
+                location: "Mumbai, India",
+                experience: "11 years",
+                languages: ["English", "Hindi", "Marathi"],
+                image: "khosla.jpeg",
+                available: false,
+                online: true
+            }
+        ];
+
+        // DOM Elements
+        const doctorsList = document.getElementById('doctors-list');
+        const searchInput = document.getElementById('search');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const noResults = document.querySelector('.no-results');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const logoutBtn = document.getElementById('logout-btn');
+        const usernameDisplay = document.getElementById('username-display');
+
+        // Render doctors
+        function renderDoctors(doctorsToRender) {
+            doctorsList.innerHTML = '';
+            
+            if (doctorsToRender.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            } else {
+                noResults.style.display = 'none';
+            }
+            
+            doctorsToRender.forEach(doctor => {
+                const doctorCard = document.createElement('div');
+                doctorCard.className = 'doctor-card';
+                
+                const availabilityClass = doctor.available ? 'available' : 'unavailable';
+                const onlineBadge = doctor.online ? '<span class="online-badge">Online</span>' : '';
+                
+                doctorCard.innerHTML = `
+                    <div class="doctor-img">
+                        <img src="${doctor.image}" alt="${doctor.name}">
+                        ${onlineBadge}
+                    </div>
+                    <div class="doctor-info">
+                        <h3>${doctor.name}</h3>
+                        <span class="specialization">${doctor.specialization}</span>
+                        <div class="doctor-details">
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${doctor.location}</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${doctor.email}</span>
+                            </div>
+                            ${doctor.phone ? `
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${doctor.phone}</span>
+                            </div>` : ''}
+                            <div class="detail-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span>${doctor.experience} experience</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-language"></i>
+                                <span>${doctor.languages.join(', ')}</span>
+                            </div>
+                        </div>
+                        <div class="action-btns">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-calendar-check"></i> Book Appointment
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-info-circle"></i> Profile
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                doctorsList.appendChild(doctorCard);
+            });
+        }
+
+        // Filter doctors
+        function filterDoctors() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').textContent;
+            
+            let filteredDoctors = doctors.filter(doctor => {
+                const matchesSearch = 
+                    doctor.name.toLowerCase().includes(searchTerm) ||
+                    doctor.specialization.toLowerCase().includes(searchTerm) ||
+                    doctor.location.toLowerCase().includes(searchTerm) ||
+                    doctor.languages.some(lang => lang.toLowerCase().includes(searchTerm));
+                
+                const matchesFilter = 
+                    activeFilter === 'All' || 
+                    (activeFilter === 'Psychiatrist' && doctor.specialization === 'Psychiatrist') ||
+                    (activeFilter === 'Psychologist' && doctor.specialization === 'Psychologist') ||
+                    (activeFilter === 'Psychotherapist' && doctor.specialization === 'Psychotherapist') ||
+                    (activeFilter === 'Online' && doctor.online);
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderDoctors(filteredDoctors);
+        }
+
+        // Initialize
+        function init() {
+            renderDoctors(doctors);
+            
+            // Search functionality
+            searchInput.addEventListener('input', filterDoctors);
+            
+            // Filter buttons
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterDoctors();
+                });
+            });
+            
+            // Dark mode toggle
+            darkModeToggle.addEventListener('change', function() {
+                document.body.classList.toggle('dark-mode', this.checked);
+                localStorage.setItem('darkMode', this.checked ? 'enabled' : 'disabled');
+            });
+            
+            // Check for saved dark mode preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.checked = true;
+            }
+            
+            // Login/logout functionality
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                window.location.href = 'index.html';
+            });
+            
+            // Check if user is logged in
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                const username = localStorage.getItem('username') || 'User';
+                usernameDisplay.textContent = `Hello, ${username}`;
+                usernameDisplay.style.display = 'inline';
+                logoutBtn.style.display = 'inline';
+            } else {
+                // Redirect to login if not logged in
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <script src='https://cdn.jotfor.ms/s/umd/latest/for-embedded-agent.js'></script>
+<script>
+  window.addEventListener("DOMContentLoaded", function() {
+    window.AgentInitializer.init({
+      agentRenderURL: "https://agent.jotform.com/019561cf62ae7d609cb0d3faf8d38aeff7e2",
+      rootId: "JotformAgent-019561cf62ae7d609cb0d3faf8d38aeff7e2",
+      formID: "019561cf62ae7d609cb0d3faf8d38aeff7e2",
+      queryParams: ["skipWelcome=1", "maximizable=1"],
+      domain: "https://www.jotform.com",
+      isDraggable: false,
+      background: "linear-gradient(180deg, #f8e71c 0%, #f5a623 100%)",
+      buttonBackgroundColor: "#50e3c2",
+      buttonIconColor: "#f5a623",
+      variant: false,
+      customizations: {
+        "greeting": "Yes",
+        "greetingMessage": "If you have anything feel free to talk😊",
+        "pulse": "Yes",
+        "position": "left",
+        "autoOpenChatIn": "0"
+      },
+      isVoice: false
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeaceHub - Stress Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --header-bg: #fd9c57;
+            --form-bg: white;
+            --label-bg: #53f17d;
+            --box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            --question-bg: white;
+            --button-bg: lightcoral;
+            --button-text: white;
+            --contact-bg: #007BFF;
+            --contact-hover: #0056b3;
+        }
+
+        .dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --header-bg: #ff8c00;
+            --form-bg: #1e1e1e;
+            --label-bg: #2e7d32;
+            --box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+            --question-bg: #2d2d2d;
+            --button-bg: #d32f2f;
+            --button-text: #ffffff;
+            --contact-bg: #0d47a1;
+            --contact-hover: #1565c0;
+        }
+
+        body {
+            background-image: url(bgimage.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        header {
+            background: var(--header-bg);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+        }
+        .nav-menu ul li {
+            display: inline;
+        }
+        .nav-menu ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: bold;
+            padding: 10px;
+            transition: 0.3s;
+        }
+        .nav-menu ul li a:hover {
+            color: white;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .form-box {
+            background: var(--form-bg);
+            padding: 20px;
+            width: 50%;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .form-box label {
+            display: block;
+            background: var(--label-bg);
+            padding: 8px;
+            border-radius: 5px;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .form-box input {
+            display: block;
+            width: 90%;
+            padding: 8px;
+            margin: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: var(--form-bg);
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s;
+        }
+        .question {
+            text-align: left;
+            margin: 15px auto;
+            width: 60%;
+            background: var(--question-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .question h3 {
+            margin-bottom: 10px;
+        }
+        .question label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        .question input[type="radio"] {
+            margin: 0;
+            transform: scale(1.2);
+        }
+        button {
+            padding: 10px 15px;
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .result-box {
+            display: none;
+            margin: 20px auto;
+            padding: 15px;
+            width: 60%;
+            background: var(--question-bg);
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+            font-weight: bold;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .contact {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .contact h2 {
+            color: var(--text-color);
+            font-size: 24px;
+            transition: color 0.3s;
+        }
+        
+        .contact p {
+            font-size: 16px;
+            color: var(--text-color);
+            transition: color 0.3s;
+        }
+        
+        .contact a {
+            display: block;
+            margin: 10px auto;
+            padding: 12px;
+            width: 250px;
+            background: var(--contact-bg);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background 0.3s ease-in-out;
+        }
+        
+        .contact a:hover {
+            background: var(--contact-hover);
+        }
+        
+        /* Login required message */
+        .login-required {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* Dark mode toggle - Left side */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode .dark-mode-toggle {
+            background-color: rgba(30, 30, 30, 0.8);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-left: 20px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .username-display {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dark Mode Toggle - Left Side -->
+    <div class="dark-mode-toggle">
+        <label class="toggle-switch">
+            <input type="checkbox" id="darkModeToggle">
+            <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Dark Mode</span>
+    </div>
+    
+    <header>
+        <div class="logo"><strong>PeaceHub</strong></div>
+        <div class="header-right">
+            <span id="username-display" class="username-display" style="display:none;"></span>
+            <button id="logout-btn" class="logout-btn" style="display:none;">Logout</button>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="#" onclick="checkLogin('01_index.html')">Home</a></li>
+                    <li><a href="#" onclick="checkLogin('02_articles.html')">Articles</a></li>
+                    <li><a href="#" onclick="checkLogin('03_meditation.html')">Meditation</a></li>
+                    <li><a href="#" onclick="checkLogin('05_chat.html')">Chat Support</a></li>
+                    <li><a href="#" onclick="checkLogin('04_Doctors.html')">Doctors</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section id="login-section" class="container">
+        <h2>Login</h2>
+        <div class="form-box">
+            <form id="login-form">
+                <label>Email:</label>
+                <input type="email" id="email" required>
+
+                <label>Password:</label>
+                <input type="password" id="password" required>
+
+                <label>Contact Number:</label>
+                <input type="tel" id="contact" required>
+                
+                <label>Parent's Contact Number:</label>
+                <input type="tel" id="parent-contact" required>
+
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div id="login-required" class="login-required">Please login first to access this page.</div>
+    </section>
+
+    <!-- Stress Quiz Section -->
+    <section id="quiz-section" class="container" style="display:none;">
+        <h2>Stress Level Quiz</h2>
+        <form id="quiz-form">
+            <div class="question">
+                <h3>1. How often do you feel overwhelmed by tasks?</h3>
+                <label><input type="radio" name="q1" value="1"> Rarely</label>
+                <label><input type="radio" name="q1" value="2"> Sometimes</label>
+                <label><input type="radio" name="q1" value="3"> Often</label>
+                <label><input type="radio" name="q1" value="4"> Always</label>
+            </div>
+
+            <div class="question">
+                <h3>2. How do you handle unexpected challenges?</h3>
+                <label><input type="radio" name="q2" value="1"> Very well</label>
+                <label><input type="radio" name="q2" value="2"> Okay</label>
+                <label><input type="radio" name="q2" value="3"> Not great</label>
+                <label><input type="radio" name="q2" value="4"> I panic</label>
+            </div>
+
+            <div class="question">
+                <h3>3. Do you have trouble sleeping due to stress?</h3>
+                <label><input type="radio" name="q3" value="1"> Never</label>
+                <label><input type="radio" name="q3" value="2"> Rarely</label>
+                <label><input type="radio" name="q3" value="3"> Sometimes</label>
+                <label><input type="radio" name="q3" value="4"> Frequently</label>
+            </div>
+
+            <div class="question">
+                <h3>4. How often do you feel physically tense or exhausted?</h3>
+                <label><input type="radio" name="q4" value="1"> Never</label>
+                <label><input type="radio" name="q4" value="2"> Occasionally</label>
+                <label><input type="radio" name="q4" value="3"> Often</label>
+                <label><input type="radio" name="q4" value="4"> Always</label>
+            </div>
+
+            <div class="question">
+                <h3>5. Do you feel supported by family and friends?</h3>
+                <label><input type="radio" name="q5" value="1"> Always</label>
+                <label><input type="radio" name="q5" value="2"> Most times</label>
+                <label><input type="radio" name="q5" value="3"> Sometimes</label>
+                <label><input type="radio" name="q5" value="4"> Rarely</label>
+            </div>
+
+            <button type="button" onclick="calculateStress()">Submit</button>
+        </form>
+
+        <div class="result-box" id="result-box"></div>
+    </section>
+
+    <div class="contact">
+        <h2>Emergency Contacts</h2>
+        <p>If you need immediate help, reach out to these helplines:</p>
+        <a href="tel:988">988 Suicide & Crisis Lifeline</a>
+        <a href="tel:18006624357">NAMI HelpLine: 1-800-662-4357</a>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+        let currentUser = null;
+        
+        document.getElementById("login-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            // Simple validation - in a real app you would verify credentials
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const contact = document.getElementById("contact").value;
+            const parentContact = document.getElementById("parent-contact").value;
+            
+            if (email && password && contact && parentContact) {
+                isLoggedIn = true;
+                currentUser = email.split('@')[0]; // Get username from email
+                document.getElementById("login-section").style.display = "none";
+                document.getElementById("quiz-section").style.display = "block";
+                
+                // Show logout button and username
+                document.getElementById("logout-btn").style.display = "block";
+                document.getElementById("username-display").style.display = "inline";
+                document.getElementById("username-display").textContent = currentUser;
+                
+                // Store login status in localStorage
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', currentUser);
+            }
+        });
+        
+        // Logout functionality
+        document.getElementById("logout-btn").addEventListener("click", function() {
+            isLoggedIn = false;
+            currentUser = null;
+            document.getElementById("login-section").style.display = "block";
+            document.getElementById("quiz-section").style.display = "none";
+            document.getElementById("logout-btn").style.display = "none";
+            document.getElementById("username-display").style.display = "none";
+            document.getElementById("result-box").style.display = "none";
+            
+            // Clear the form
+            document.getElementById("login-form").reset();
+            
+            // Remove from localStorage
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+        });
+        
+        function checkLogin(page) {
+            if (isLoggedIn || localStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = page;
+            } else {
+                document.getElementById("login-required").style.display = "block";
+                setTimeout(() => {
+                    document.getElementById("login-required").style.display = "none";
+                }, 3000);
+            }
+        }
+        
+        // Check if user is already logged in when page loads
+        window.onload = function() {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                isLoggedIn = true;
+                currentUser = localStorage.getItem('username') || 'User';
+                document.getElementById("login-section").style.display = "none";
+                document.getElementById("quiz-section").style.display = "block";
+                document.getElementById("logout-btn").style.display = "block";
+                document.getElementById("username-display").style.display = "inline";
+                document.getElementById("username-display").textContent = currentUser;
+            }
+
+            // Check for saved dark mode preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeToggle').checked = true;
+            }
+        };
+
+        function calculateStress() {
+            let score = 0;
+            for (let i = 1; i <= 5; i++) {
+                let checked = document.querySelector(`input[name="q${i}"]:checked`);
+                if (checked) {
+                    score += parseInt(checked.value);
+                }
+            }
+
+            let resultText = "Your Stress Level: ";
+            if (score <= 7) resultText += "Low 😊 :You are calm and managing stress well. Keep up the good work!";
+            else if (score <= 13) resultText += "Moderate 😐 : Your stress level is high. Take a break, practice mindfulness, and seek support if needed.";
+            else resultText += "High 😟 : Your stress is at an extreme level. Prioritize self-care and talk to someone for support.";
+
+            document.getElementById("result-box").innerHTML = resultText;
+            document.getElementById("result-box").style.display = "block";
+        }
+
+        // Dark mode toggle functionality
+        document.getElementById('darkModeToggle').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Support</title>
+    <script src='https://cdn.jotfor.ms/s/umd/latest/for-embedded-agent.js'></script>
+    <style>
+        #chatSupportBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #50e3c2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <button id="chatSupportBtn">Chat Support</button>
+    
+    <script>
+        document.getElementById("chatSupportBtn").addEventListener("click", function() {
+            window.AgentInitializer.init({
+                agentRenderURL: "https://agent.jotform.com/019561cf62ae7d609cb0d3faf8d38aeff7e2",
+                rootId: "JotformAgent-019561cf62ae7d609cb0d3faf8d38aeff7e2",
+                formID: "019561cf62ae7d609cb0d3faf8d38aeff7e2",
+                queryParams: ["skipWelcome=1", "maximizable=1"],
+                domain: "https://www.jotform.com",
+                isDraggable: false,
+                background: "linear-gradient(180deg, #f8e71c 0%, #f5a623 100%)",
+                buttonBackgroundColor: "#50e3c2",
+                buttonIconColor: "#f5a623",
+                variant: false,
+                customizations: {
+                    "greeting": "Yes",
+                    "greetingMessage": "Hi! How can I assist you?",
+                    "pulse": "Yes",
+                    "position": "right"
+                },
+                isVoice: undefined
+            });
+        });
+    </script>
+</body>
+</html>

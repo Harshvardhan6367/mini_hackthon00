@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubble Pop Mental Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-1: #FF9E9E;
+            --color-2: #91F48F;
+            --color-3: #86E3FF;
+            --color-4: #FFD700;
+            --color-5: #D4A5FF;
+            --color-6: #FFB347;
+            --color-bg: #1A1A2E;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--color-bg);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #score-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        #timer-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        #feedback {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 50px;
+            z-index: 10;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+            transition: transform 0.1s;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        .bubble:hover {
+            transform: scale(1.1);
+        }
+
+        .bubble:active {
+            transform: scale(0.9);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        #start-screen, #end-screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 46, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            color: white;
+            text-align: center;
+        }
+
+        #end-screen {
+            display: none;
+        }
+
+        h1 {
+            font-family: 'Chewy', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #FF9E9E, #86E3FF, #D4A5FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            background: linear-gradient(45deg, #FF9E9E, #86E3FF);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .mental-feedback {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        #not-over-message {
+            margin-top: 30px;
+            font-size: 2rem;
+            font-family: 'Chewy', cursive;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+            background: linear-gradient(45deg, #FF9E9E, #86E3FF, #D4A5FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #not-over-message span {
+            display: block;
+            font-size: 1rem;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="score-display">Score: <span id="score">0</span></div>
+        <div id="timer-display">Time: <span id="time">0.0</span>s</div>
+        <div id="feedback">Pop the bubbles as fast as you can!</div>
+
+        <div id="start-screen">
+            <h1>Bubble Pop Mental Game</h1>
+            <p>Pop bubbles quickly to test your focus and reaction time!</p>
+            <button id="start-btn">Start Game</button>
+        </div>
+
+        <div id="end-screen">
+            <h1>Game Over!</h1>
+            <p>Your Score: <span id="final-score">0</span></p>
+            <p>Average Reaction Time: <span id="avg-time">0.0</span>s</p>
+            <div class="mental-feedback" id="mental-feedback"></div>
+            <div id="not-over-message">
+                It's not over yet!<br>
+                <span>Preparing the next challenge...</span>
+            </div>
+        </div>
+    </div>
+
+    <audio id="pop-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
+    <audio id="drumroll-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-drum-roll-1851.mp3" preload="auto"></audio>
+
+    <script>
+        // Game Configuration
+        const config = {
+            gameDuration: 30, // seconds
+            bubbleColors: [
+                '#FF9E9E', '#91F48F', '#86E3FF', 
+                '#FFD700', '#D4A5FF', '#FFB347'
+            ],
+            minBubbleSize: 40,
+            maxBubbleSize: 100,
+            bubbleSpawnRate: 800, // ms
+            feedbackMessages: {
+                fast: ["Amazing speed! ⚡", "Lightning reflexes!", "You're on fire! 🔥"],
+                medium: ["Good job! 👍", "Nice popping!", "Keep it up!"],
+                slow: ["You can do faster!", "Focus!", "Try to be quicker!"]
+            },
+            mentalAssessments: [
+                {
+                    minScore: 50,
+                    maxTime: 0.5,
+                    message: "Incredible focus! Your mind is razor-sharp today! 🧠✨",
+                    mood: "Excellent"
+                },
+                {
+                    minScore: 30,
+                    maxTime: 0.8,
+                    message: "Great concentration! You're doing well. 😊",
+                    mood: "Good"
+                },
+                {
+                    minScore: 15,
+                    maxTime: 1.2,
+                    message: "Average performance. Maybe you're a bit distracted? 🤔",
+                    mood: "Okay"
+                },
+                {
+                    minScore: 0,
+                    maxTime: 999,
+                    message: "You seem tired or stressed. Consider taking a break! 🧘‍♂️",
+                    mood: "Tired"
+                }
+            ]
+        };
+
+        // Game State
+        const state = {
+            score: 0,
+            startTime: 0,
+            gameActive: false,
+            reactionTimes: [],
+            lastBubbleTime: 0,
+            bubbles: []
+        };
+
+        // DOM Elements
+        const elements = {
+            gameContainer: document.getElementById('game-container'),
+            scoreDisplay: document.getElementById('score'),
+            timeDisplay: document.getElementById('time'),
+            feedback: document.getElementById('feedback'),
+            startScreen: document.getElementById('start-screen'),
+            endScreen: document.getElementById('end-screen'),
+            finalScore: document.getElementById('final-score'),
+            avgTime: document.getElementById('avg-time'),
+            mentalFeedback: document.getElementById('mental-feedback'),
+            startBtn: document.getElementById('start-btn'),
+            popSound: document.getElementById('pop-sound'),
+            drumrollSound: document.getElementById('drumroll-sound'),
+            notOverMessage: document.getElementById('not-over-message')
+        };
+
+        // Initialize Game
+        function initGame() {
+            state.score = 0;
+            state.reactionTimes = [];
+            state.gameActive = true;
+            state.startTime = Date.now();
+            state.lastBubbleTime = Date.now();
+            
+            elements.scoreDisplay.textContent = '0';
+            elements.timeDisplay.textContent = '0.0';
+            elements.startScreen.style.display = 'none';
+            elements.endScreen.style.display = 'none';
+            
+            // Clear existing bubbles
+            state.bubbles.forEach(bubble => bubble.remove());
+            state.bubbles = [];
+            
+            // Start game loop
+            gameLoop();
+        }
+
+        // Main Game Loop
+        function gameLoop() {
+            if (!state.gameActive) return;
+            
+            // Update timer
+            const currentTime = (Date.now() - state.startTime) / 1000;
+            elements.timeDisplay.textContent = currentTime.toFixed(1);
+            
+            // Spawn new bubbles
+            if (Date.now() - state.lastBubbleTime > config.bubbleSpawnRate) {
+                spawnBubble();
+                state.lastBubbleTime = Date.now();
+            }
+            
+            // Check if game time is up
+            if (currentTime >= config.gameDuration) {
+                endGame();
+                return;
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Spawn a New Bubble
+        function spawnBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            // Random properties
+            const size = Math.random() * (config.maxBubbleSize - config.minBubbleSize) + config.minBubbleSize;
+            const color = config.bubbleColors[Math.floor(Math.random() * config.bubbleColors.length)];
+            
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.background = color;
+            
+            // Random position (within viewport)
+            const x = Math.random() * (window.innerWidth - size);
+            const y = Math.random() * (window.innerHeight - size);
+            
+            bubble.style.left = `${x}px`;
+            bubble.style.top = `${y}px`;
+            
+            // Click handler
+            bubble.addEventListener('click', () => popBubble(bubble, Date.now()));
+            
+            document.body.appendChild(bubble);
+            state.bubbles.push(bubble);
+        }
+
+        // Pop a Bubble
+        function popBubble(bubble, clickTime) {
+            if (!state.gameActive) return;
+            
+            // Play sound
+            elements.popSound.currentTime = 0;
+            elements.popSound.play();
+            
+            // Calculate reaction time (since bubble creation)
+            const bubbleTime = state.lastBubbleTime;
+            const reactionTime = (clickTime - bubbleTime) / 1000;
+            state.reactionTimes.push(reactionTime);
+            
+            // Update score
+            state.score++;
+            elements.scoreDisplay.textContent = state.score;
+            
+            // Give feedback based on reaction time
+            let feedback;
+            if (reactionTime < 0.5) {
+                feedback = config.feedbackMessages.fast[
+                    Math.floor(Math.random() * config.feedbackMessages.fast.length)
+                ];
+            } else if (reactionTime < 1.0) {
+                feedback = config.feedbackMessages.medium[
+                    Math.floor(Math.random() * config.feedbackMessages.medium.length)
+                ];
+            } else {
+                feedback = config.feedbackMessages.slow[
+                    Math.floor(Math.random() * config.feedbackMessages.slow.length)
+                ];
+            }
+            
+            elements.feedback.textContent = feedback;
+            
+            // Animate bubble pop
+            bubble.style.transform = 'scale(1.2)';
+            bubble.style.opacity = '0';
+            setTimeout(() => bubble.remove(), 200);
+            
+            // Create mini explosion effect
+            createBubbleExplosion(bubble);
+        }
+
+        // Create Bubble Explosion Effect
+        function createBubbleExplosion(bubble) {
+            const rect = bubble.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+            const color = bubble.style.backgroundColor;
+            
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                particle.style.backgroundColor = color;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.width = `${Math.random() * 8 + 4}px`;
+                particle.style.height = particle.style.width;
+                
+                // Random direction
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 5 + 2;
+                const xVel = Math.cos(angle) * velocity;
+                const yVel = Math.sin(angle) * velocity;
+                
+                document.body.appendChild(particle);
+                
+                let posX = x;
+                let posY = y;
+                let opacity = 1;
+                
+                const animate = () => {
+                    posX += xVel;
+                    posY += yVel;
+                    opacity -= 0.02;
+                    
+                    particle.style.left = `${posX}px`;
+                    particle.style.top = `${posY}px`;
+                    particle.style.opacity = opacity;
+                    
+                    if (opacity > 0) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        particle.remove();
+                    }
+                };
+                
+                animate();
+            }
+        }
+
+        // End Game
+        function endGame() {
+            state.gameActive = false;
+            
+            // Clear all bubbles
+            state.bubbles.forEach(bubble => bubble.remove());
+            state.bubbles = [];
+            
+            // Calculate average reaction time
+            const avgTime = state.reactionTimes.reduce((a, b) => a + b, 0) / state.reactionTimes.length || 0;
+            
+            // Update end screen
+            elements.finalScore.textContent = state.score;
+            elements.avgTime.textContent = avgTime.toFixed(2);
+            
+            // Determine mental assessment
+            let assessment = config.mentalAssessments.find(a => 
+                state.score >= a.minScore && avgTime <= a.maxTime
+            ) || config.mentalAssessments[config.mentalAssessments.length - 1];
+            
+            elements.mentalFeedback.textContent = assessment.message;
+            
+            // Show end screen
+            elements.endScreen.style.display = 'flex';
+            
+            // Play drumroll sound
+            elements.drumrollSound.currentTime = 0;
+            elements.drumrollSound.play();
+            
+            // Redirect after delay
+            setTimeout(() => {
+                window.location.href = '08_g2.html';
+            }, 3000);
+        }
+
+        // Event Listeners
+        elements.startBtn.addEventListener('click', initGame);
+
+        // Preload sound
+        window.addEventListener('load', () => {
+            elements.popSound.volume = 0.3;
+            elements.drumrollSound.volume = 0.5;
+        });
+    </script>
+</body>
+</html>

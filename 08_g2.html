@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Spectrum - Color Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-header {
+            margin-bottom: 25px;
+        }
+        
+        .game-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .game-subtitle {
+            font-size: 1rem;
+            color: #636e72;
+            font-weight: 300;
+        }
+        
+        .target-color {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .target-color::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+            border-radius: 15px;
+        }
+        
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .color-option {
+            height: 70px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.15);
+        }
+        
+        .color-option:active {
+            transform: translateY(1px);
+        }
+        
+        .color-option::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.1), rgba(0,0,0,0));
+            border-radius: 10px;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #636e72;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #dfe6e9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .feedback {
+            min-height: 60px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback.correct {
+            background: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+        
+        .feedback.incorrect {
+            background: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+        }
+        
+        .btn:hover {
+            background: #5649d6;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 15px rgba(108, 92, 231, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .game-result {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .game-result.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .result-message {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .result-stats {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 30px;
+        }
+        
+        .result-stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+
+        .next-challenge {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 20px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(108, 92, 231, 0.2);
+            animation: pulse 1.5s infinite;
+        }
+
+        .next-challenge span {
+            display: block;
+            font-size: 1rem;
+            margin-top: 10px;
+            color: #636e72;
+            font-weight: 400;
+        }
+        
+        @media (max-width: 500px) {
+            .game-container {
+                padding: 20px;
+            }
+            
+            .color-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">Mood Spectrum</h1>
+            <p class="game-subtitle">Match the colors to test your focus</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+        
+        <div class="target-color" id="target"></div>
+        
+        <div class="color-options" id="options"></div>
+        
+        <div class="game-stats">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="round">1/10</div>
+                <div class="stat-label">Round</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="time">0.0s</div>
+                <div class="stat-label">Reaction</div>
+            </div>
+        </div>
+        
+        <div class="feedback" id="feedback">
+            Select the matching color below
+        </div>
+        
+        <button class="btn" id="restart">Start New Game</button>
+        
+        <div class="game-result" id="result">
+            <h2 class="result-title">Game Complete!</h2>
+            <p class="result-message" id="result-message"></p>
+            
+            <div class="result-stats">
+                <div class="result-stat">
+                    <span>Your Score:</span>
+                    <strong id="final-score">0</strong>
+                </div>
+                <div class="result-stat">
+                    <span>Average Time:</span>
+                    <strong id="avg-time">0.0s</strong>
+                </div>
+                <div class="result-stat">
+                    <span>Accuracy:</span>
+                    <strong id="accuracy">0%</strong>
+                </div>
+            </div>
+            
+            <div class="next-challenge">
+                Great job champ!<br>
+                <span>Get ready for the next challenge...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game configuration
+        const config = {
+            totalRounds: 10,
+            colors: [
+                '#FF5252', '#FF4081', '#E040FB', '#7C4DFF', 
+                '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', 
+                '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41', 
+                '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'
+            ],
+            feedbackMessages: {
+                fastCorrect: [
+                    "Lightning fast! ⚡",
+                    "Incredible reflexes!",
+                    "You're on fire! 🔥"
+                ],
+                mediumCorrect: [
+                    "Good job! 👍",
+                    "Nice one!",
+                    "Keep it up!"
+                ],
+                slowCorrect: [
+                    "You got it!",
+                    "A bit slow, but correct!",
+                    "Focus! You can do better!"
+                ],
+                incorrect: [
+                    "Oops! Try again",
+                    "Not quite right",
+                    "Pay attention!"
+                ]
+            },
+            resultAssessments: [
+                {
+                    minScore: 9,
+                    minSpeed: 0.8,
+                    message: "Amazing focus! Your mind is sharp as a tack today! �✨",
+                    mood: "Excellent"
+                },
+                {
+                    minScore: 7,
+                    minSpeed: 1.0,
+                    message: "Good concentration! You're doing well. 😊",
+                    mood: "Good"
+                },
+                {
+                    minScore: 5,
+                    minSpeed: 1.2,
+                    message: "Average performance. Maybe you're a bit distracted? 🤔",
+                    mood: "Okay"
+                },
+                {
+                    minScore: 0,
+                    minSpeed: 0,
+                    message: "You seem tired or stressed. Consider taking a break! 🧘‍♂️",
+                    mood: "Tired"
+                }
+            ]
+        };
+
+        // Game state
+        const state = {
+            currentRound: 0,
+            score: 0,
+            reactionTimes: [],
+            startTime: 0,
+            targetColor: '',
+            gameActive: false
+        };
+
+        // DOM elements
+        const elements = {
+            target: document.getElementById('target'),
+            options: document.getElementById('options'),
+            score: document.getElementById('score'),
+            round: document.getElementById('round'),
+            time: document.getElementById('time'),
+            feedback: document.getElementById('feedback'),
+            progress: document.getElementById('progress'),
+            result: document.getElementById('result'),
+            resultMessage: document.getElementById('result-message'),
+            finalScore: document.getElementById('final-score'),
+            avgTime: document.getElementById('avg-time'),
+            accuracy: document.getElementById('accuracy'),
+            restart: document.getElementById('restart')
+        };
+
+        // Initialize game
+        function initGame() {
+            state.currentRound = 0;
+            state.score = 0;
+            state.reactionTimes = [];
+            state.gameActive = true;
+            
+            elements.score.textContent = '0';
+            elements.round.textContent = `1/${config.totalRounds}`;
+            elements.feedback.textContent = "Select the matching color below";
+            elements.feedback.className = "feedback";
+            elements.progress.style.width = '0%';
+            elements.result.classList.remove('show');
+            
+            nextRound();
+        }
+
+        // Start next round
+        function nextRound() {
+            if (!state.gameActive) return;
+            
+            state.currentRound++;
+            
+            if (state.currentRound > config.totalRounds) {
+                endGame();
+                return;
+            }
+            
+            // Update UI
+            elements.round.textContent = `${state.currentRound}/${config.totalRounds}`;
+            elements.progress.style.width = `${(state.currentRound/config.totalRounds)*100}%`;
+            
+            // Set target color
+            state.targetColor = config.colors[Math.floor(Math.random() * config.colors.length)];
+            elements.target.style.background = state.targetColor;
+            elements.target.classList.add('pulse');
+            
+            // Create options (3 colors including target)
+            const options = [state.targetColor];
+            while (options.length < 3) {
+                const randomColor = config.colors[Math.floor(Math.random() * config.colors.length)];
+                if (!options.includes(randomColor)) {
+                    options.push(randomColor);
+                }
+            }
+            
+            // Shuffle options
+            options.sort(() => Math.random() - 0.5);
+            
+            // Render options
+            elements.options.innerHTML = '';
+            options.forEach(color => {
+                const option = document.createElement('div');
+                option.className = 'color-option';
+                option.style.background = color;
+                option.addEventListener('click', () => checkAnswer(color));
+                elements.options.appendChild(option);
+            });
+            
+            // Start timer
+            state.startTime = performance.now();
+        }
+
+        // Check player's answer
+        function checkAnswer(selectedColor) {
+            if (!state.gameActive) return;
+            
+            // Calculate reaction time
+            const reactionTime = (performance.now() - state.startTime) / 1000;
+            state.reactionTimes.push(reactionTime);
+            elements.time.textContent = `${reactionTime.toFixed(1)}s`;
+            
+            // Remove pulse animation
+            elements.target.classList.remove('pulse');
+            
+            // Check if correct
+            const isCorrect = selectedColor === state.targetColor;
+            
+            if (isCorrect) {
+                state.score++;
+                elements.score.textContent = state.score;
+                
+                // Different feedback based on reaction time
+                let feedback;
+                if (reactionTime < 0.6) {
+                    feedback = config.feedbackMessages.fastCorrect[
+                        Math.floor(Math.random() * config.feedbackMessages.fastCorrect.length)
+                    ];
+                } else if (reactionTime < 1.2) {
+                    feedback = config.feedbackMessages.mediumCorrect[
+                        Math.floor(Math.random() * config.feedbackMessages.mediumCorrect.length)
+                    ];
+                } else {
+                    feedback = config.feedbackMessages.slowCorrect[
+                        Math.floor(Math.random() * config.feedbackMessages.slowCorrect.length)
+                    ];
+                }
+                
+                elements.feedback.textContent = feedback;
+                elements.feedback.className = "feedback correct";
+                createConfetti();
+            } else {
+                feedback = config.feedbackMessages.incorrect[
+                    Math.floor(Math.random() * config.feedbackMessages.incorrect.length)
+                ];
+                elements.feedback.textContent = feedback;
+                elements.feedback.className = "feedback incorrect";
+            }
+            
+            // Next round after delay
+            setTimeout(nextRound, 1500);
+        }
+
+        // End game and show results
+        function endGame() {
+            state.gameActive = false;
+            
+            // Calculate stats
+            const avgTime = state.reactionTimes.reduce((a, b) => a + b, 0) / state.reactionTimes.length;
+            const accuracy = (state.score / config.totalRounds) * 100;
+            
+            // Update result UI
+            elements.finalScore.textContent = `${state.score}/${config.totalRounds}`;
+            elements.avgTime.textContent = `${avgTime.toFixed(1)}s`;
+            elements.accuracy.textContent = `${accuracy.toFixed(0)}%`;
+            
+            // Determine mood assessment
+            let assessment = config.resultAssessments.find(a => 
+                state.score >= a.minScore && avgTime <= a.minSpeed
+            ) || config.resultAssessments[config.resultAssessments.length - 1];
+            
+            elements.resultMessage.textContent = assessment.message;
+            
+            // Show result screen
+            elements.result.classList.add('show');
+
+            // Create confetti celebration
+            createConfetti();
+
+            // Redirect after delay
+            setTimeout(() => {
+                window.location.href = '08_g3.html';
+            }, 3000);
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = '-10px';
+                confetti.style.backgroundColor = config.colors[Math.floor(Math.random() * config.colors.length)];
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = confetti.style.width;
+                confetti.style.opacity = '1';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                const animationDuration = `${1 + Math.random() * 2}s`;
+                confetti.style.animation = `fall ${animationDuration} linear forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+            
+            // Add fall animation
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes fall {
+                    to {
+                        transform: translateY(100vh) rotate(360deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Event listeners
+        elements.restart.addEventListener('click', initGame);
+
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
