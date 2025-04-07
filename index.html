@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeaceHub - Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.5s ease;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #1a2a6c, #3a1c71);
+    }
+
+    header {
+      background-color: rgba(0, 0, 50, 0.3);
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      color: white;
+      transition: background-color 0.3s;
+    }
+
+    .dark-mode header {
+      background-color: rgba(0, 0, 20, 0.5);
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .nav-menu ul li {
+      margin: 0 15px;
+    }
+
+    .nav-menu ul li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-menu ul li a:hover {
+      color: #ffef99;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      color: #fff;
+      margin: 40px auto;
+      transition: all 0.3s;
+    }
+
+    .dark-mode .login-container {
+      background: rgba(0, 0, 30, 0.3);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      text-align: left;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s;
+    }
+
+    .dark-mode input[type="email"],
+    .dark-mode input[type="password"],
+    .dark-mode input[type="tel"] {
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .dark-mode button {
+      background-color: #0d47a1;
+    }
+
+    .dark-mode button:hover {
+      background-color: #1565c0;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #eee;
+    }
+
+    .login-message {
+      color: #ff6b6b;
+      margin-top: 10px;
+      font-weight: bold;
+      display: none;
+    }
+
+    /* Dark mode toggle */
+    .dark-mode-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 24px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0 5px;
+      transition: background 0.3s;
+    }
+
+    .dark-mode-toggle:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .dark-mode .dark-mode-toggle {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .toggle-slider {
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .dark-mode .toggle-slider {
+      transform: translateX(26px);
+      background: #ffef99;
+    }
+
+    /* User info in header */
+    .user-info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .username-display {
+      font-weight: bold;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dark Mode Toggle -->
+  <div class="dark-mode-toggle" id="darkModeToggle">
+    <div class="toggle-slider"></div>
+  </div>
+
+  <header>
+    <div class="user-info" id="userInfo" style="display: none;">
+      <span class="username-display" id="usernameDisplay"></span>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+    <div class="logo">PeaceHub</div>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="#" onclick="checkLogin('01_index.html')">Home</a></li>
+        <li><a href="#" onclick="checkLogin('02_articles.html')">Articles</a></li>
+        <li><a href="#" onclick="checkLogin('03_meditation.html')">Meditation</a></li>
+        <li><a href="#" onclick="checkLogin('05_chat.html')">Chat Support</a></li>
+        <li><a href="#" onclick="checkLogin('04_Doctors.html')">Doctors</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Login Section -->
+  <div class="login-container" id="login-section">
+    <h2>PeaceHub Login</h2>
+    <form id="login-form">
+      <label for="email">Email</label>
+      <input type="email" id="email" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required>
+
+      <label for="contact">Contact Number</label>
+      <input type="tel" id="contact" required>
+
+      <label for="parent-contact">Parent's Contact Number</label>
+      <input type="tel" id="parent-contact" required>
+
+      <button type="submit">Sign In</button>
+    </form>
+    <div class="login-message" id="loginMessage">Please login to access this page</div>
+    <div class="footer">Don't worry, your info is safe with us 💙</div>
+  </div>
+
+  <script>
+    // Check if user is logged in on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check dark mode preference
+      if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+      }
+      
+      // Check login status
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        // User is logged in, redirect to index
+        window.location.href = '01_index.html';
+      }
+    });
+
+    // Dark mode toggle functionality
+    document.getElementById('darkModeToggle').addEventListener('click', function() {
+      document.body.classList.toggle('dark-mode');
+      
+      // Save preference to localStorage
+      if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('darkMode', 'enabled');
+      } else {
+        localStorage.setItem('darkMode', 'disabled');
+      }
+    });
+
+    // Login form submission
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const contact = document.getElementById('contact').value;
+      const parentContact = document.getElementById('parent-contact').value;
+      
+      // Simple validation - in a real app you would verify credentials
+      if (email && password && contact && parentContact) {
+        // Store login status and username in localStorage
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('username', email.split('@')[0]); // Get username from email
+        localStorage.setItem('contact', contact);
+        localStorage.setItem('parentContact', parentContact);
+        
+        // Redirect to index page
+        window.location.href = '07_g1.html';
+      }
+    });
+
+    // Check login status before accessing pages
+    function checkLogin(page) {
+      if (localStorage.getItem('isLoggedIn') !== 'true') {
+        document.getElementById('loginMessage').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('loginMessage').style.display = 'none';
+        }, 3000);
+        return false;
+      } else {
+        window.location.href = page;
+        return true;
+      }
+    }
+
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('username');
+      localStorage.removeItem('contact');
+      localStorage.removeItem('parentContact');
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
