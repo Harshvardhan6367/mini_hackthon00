@@ -467,6 +467,87 @@
             visibility: visible;
             opacity: 1;
         }
+
+        /* Games recommendation section */
+        .games-recommendation {
+            display: none;
+            background: var(--form-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--box-shadow);
+            margin: 30px auto;
+            max-width: 800px;
+            border-top: 5px solid #4CAF50;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .games-recommendation h3 {
+            color: #4CAF50;
+            margin-top: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .games-recommendation p {
+            margin-bottom: 20px;
+        }
+
+        .game-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .game-card {
+            background: var(--question-bg);
+            border-radius: 10px;
+            padding: 20px;
+            width: 220px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .game-card i {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .game-card h4 {
+            margin: 0 0 10px;
+            color: var(--header-bg);
+        }
+
+        .game-card p {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .game-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .game-btn:hover {
+            background: #3e8e41;
+        }
     </style>
 </head>
 
@@ -569,6 +650,35 @@
                 <p id="result-text"></p>
                 <div id="recommendations"></div>
             </div>
+
+            <!-- Games Recommendation Section -->
+            <div class="games-recommendation" id="games-recommendation">
+                <h3><i class="fas fa-gamepad"></i> Relax with Our Therapeutic Games</h3>
+                <p>Playing games can be a great way to relieve stress and improve your mood. Try these relaxing games designed to help you unwind:</p>
+                
+                <div class="game-cards">
+                    <div class="game-card">
+                        <i class="fas fa-cloud"></i>
+                        <h4>Bubble Pop</h4>
+                        <p>A soothing bubble-popping game to help you relax and focus.</p>
+                        <a href="06_games.html#bubble-pop" class="game-btn">Play Now</a>
+                    </div>
+                    
+                    <div class="game-card">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <h4>Mindful Puzzles</h4>
+                        <p>Beautiful jigsaw puzzles with calming nature scenes.</p>
+                        <a href="06_games.html#mindful-puzzles" class="game-btn">Play Now</a>
+                    </div>
+                    
+                    <div class="game-card">
+                        <i class="fas fa-paint-brush"></i>
+                        <h4>Color Therapy</h4>
+                        <p>Creative coloring book with relaxing patterns and colors.</p>
+                        <a href="06_games.html#color-therapy" class="game-btn">Play Now</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -639,10 +749,12 @@
             const resultBox = document.getElementById('result-box');
             const resultText = document.getElementById('result-text');
             const recommendations = document.getElementById('recommendations');
+            const gamesSection = document.getElementById('games-recommendation');
             
             // Show loading spinner
             loader.style.display = 'block';
             resultBox.style.display = 'none';
+            gamesSection.style.display = 'none';
             
             // Simulate processing delay
             setTimeout(() => {
@@ -687,6 +799,7 @@
                 resultText.innerHTML = result;
                 recommendations.innerHTML = recs;
                 resultBox.style.display = 'block';
+                gamesSection.style.display = 'block';
                 
                 // Scroll to results
                 resultBox.scrollIntoView({ behavior: 'smooth' });
